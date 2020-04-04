@@ -8,12 +8,21 @@
         xmlns:local="clr-namespace:EclipseScriptGenerator"
         mc:Ignorable="d"
         Title="Eclipse Script Generator" Height="450" Width="800" TitleCharacterCasing="Normal">
-    <!--<Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="by RDX" />
-            </StackPanel>
-        </Controls:WindowCommands>
-    </Controls:MetroWindow.RightWindowCommands>-->
-    <Grid/>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="0,10,0,0">
+            <TextBlock Text="Windows Authentication Only"/>
+            <TextBox 
+                Name="SERVER_NAME_CTRL" 
+                Controls:TextBoxHelper.Watermark="Server Name" 
+                Width="200" 
+                Margin="0,10,0,10" 
+                Text="devdrdbnode01,7947"/>
+            <Button Name="CNNECT_BTN_CTRL" Content="Connect" Click="CNNECT_BTN_CTRL_Click" Margin="0,0,0,10"></Button>
+            <ComboBox Name="DB_LIST_CTRL" DisplayMemberPath="Name" Visibility="Collapsed"/>
+        </StackPanel>
+    </Grid>
 </Controls:MetroWindow>
