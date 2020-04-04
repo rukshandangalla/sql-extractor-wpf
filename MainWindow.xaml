@@ -1,13 +1,19 @@
-﻿<Window x:Class="EclipseScriptGenerator.MainWindow"
+﻿<Controls:MetroWindow x:Class="EclipseScriptGenerator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:EclipseScriptGenerator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <DataGrid HorizontalAlignment="Left" Height="100" Margin="10,58,0,0" VerticalAlignment="Top" Width="772"/>
-    </Grid>
-</Window>
+        Title="Eclipse Script Generator" Height="450" Width="800" TitleCharacterCasing="Normal">
+    <!--<Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="by RDX" />
+            </StackPanel>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>-->
+    <Grid/>
+</Controls:MetroWindow>
