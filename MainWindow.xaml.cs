@@ -4,7 +4,10 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,15 +29,8 @@ namespace EclipseScriptGenerator
         /// </summary>
         private void LoadData()
         {
-            //Dummy DATA
-            //var tempList = new List<SProc>();
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    var sp = new SProc { SPName = $"SPName:{i}", IsSelected = false, CREATED = new DateTime(), LAST_ALTERED = new DateTime() };
-            //    tempList.Add(sp);
-            //}
-
-            //SP_LIST_CTRL.ItemsSource = tempList;
+            string headerText = File.ReadAllText(@"D:\Projects\RnD\SQL-Checker\sql-extractor-wpf\config\header.sql");
+            HEADER_CNT_CTRL.Text = headerText;
         }
 
         /// <summary>
@@ -85,7 +81,8 @@ namespace EclipseScriptGenerator
                 using (var connection = new SqlConnection(sqlConnectionString))
                 {
                     await connection.OpenAsync();
-                    var result = await connection.QueryAsync<SProc>("SELECT  '[' + ROUTINE_SCHEMA + '].[' + ROUTINE_NAME + ']' AS SPName, ROUTINE_SCHEMA, ROUTINE_NAME, CREATED, LAST_ALTERED FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE';");
+                    string query = "SELECT  '[' + ROUTINE_SCHEMA + '].[' + ROUTINE_NAME + ']' AS SPName, ROUTINE_SCHEMA, ROUTINE_NAME, CREATED, LAST_ALTERED FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE' ORDER BY LAST_ALTERED DESC;";
+                    var result = await connection.QueryAsync<SProc>(query);
                     spList = result.ToList();
                     connection.Close();
                 }
@@ -106,7 +103,7 @@ namespace EclipseScriptGenerator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void GEN_BTN_CTRL_Click(object sender, RoutedEventArgs e)
+        private async void GEN_BTN_CTRL_Click(object sender, RoutedEventArgs e)
         {
             var spList = SP_LIST_CTRL.ItemsSource as List<SProc>;
             var selectedList = new List<SProc>();
@@ -116,7 +113,63 @@ namespace EclipseScriptGenerator
                 if (sp.IsSelected)
                 {
                     selectedList.Add(sp);
+                    await GetTextContent(sp.SPName);
                 }
+            }
+        }
+
+        private async Task GetTextContent(string spName)
+        {
+            try
+            {
+                var selectedDB = DB_LIST_CTRL.SelectedItem as DataBase;
+                string sqlConnectionString = $"Data Source={SERVER_NAME_CTRL.Text};Initial Catalog={selectedDB.Name};Trusted_Connection=Yes;Max Pool Size=2000;Connection Timeout=300";
+
+                List<string> spLines = new List<string>();
+                using (var connection = new SqlConnection(sqlConnectionString))
+                {
+                    await connection.OpenAsync();
+                    var result = await connection.QueryAsync<string>($"EXEC sp_helptext '{spName}'");
+                    spLines = result.ToList();
+                    connection.Close();
+                }
+
+                string spText = string.Empty;
+
+                // Append Header
+                spText += HEADER_CNT_CTRL.Text;
+
+                foreach (var line in spLines)
+                {
+                    spText += line;
+                }
+
+                string fileName = @"D:\Projects\RnD\SQL-Checker\sql-extractor-wpf\SPs\" + spName + ".sql";
+
+                try
+                {
+                    // Check if file already exists. If yes, delete it.     
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
+
+                    // Create a new file     
+                    using (FileStream fs = File.Create(fileName))
+                    {
+                        // Add some text to file    
+                        byte[] content = new UTF8Encoding(true).GetBytes(spText);
+                        fs.Write(content, 0, content.Length);
+                    }
+                }
+                catch (Exception Ex)
+                {
+                    Console.WriteLine(Ex.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }
