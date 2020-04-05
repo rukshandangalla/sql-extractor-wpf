@@ -18,6 +18,9 @@ namespace EclipseScriptGenerator
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private List<SProc> spList;
+        private List<SProc> selectedSPList;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,6 +34,9 @@ namespace EclipseScriptGenerator
         {
             string headerText = File.ReadAllText(@"D:\Projects\RnD\SQL-Checker\sql-extractor-wpf\config\header.sql");
             HEADER_CNT_CTRL.Text = headerText;
+
+            SP_SEARCH_CTRL.IsEnabled = false;
+            selectedSPList = new List<SProc>();
         }
 
         /// <summary>
@@ -55,7 +61,7 @@ namespace EclipseScriptGenerator
 
                 if (DBs.Count > 0)
                 {
-                    DB_LIST_CTRL.Visibility = Visibility.Visible;
+                    DB_LIST_CTRL.IsEnabled = true;
                     DB_LIST_CTRL.ItemsSource = DBs;
                 }
             }
@@ -77,7 +83,7 @@ namespace EclipseScriptGenerator
                 var selectedDB = DB_LIST_CTRL.SelectedItem as DataBase;
                 string sqlConnectionString = $"Data Source={SERVER_NAME_CTRL.Text};Initial Catalog={selectedDB.Name};Trusted_Connection=Yes;Max Pool Size=2000;Connection Timeout=300";
 
-                List<SProc> spList = new List<SProc>();
+                spList = new List<SProc>();
                 using (var connection = new SqlConnection(sqlConnectionString))
                 {
                     await connection.OpenAsync();
@@ -90,6 +96,7 @@ namespace EclipseScriptGenerator
                 if (spList.Count > 0)
                 {
                     SP_LIST_CTRL.ItemsSource = spList;
+                    SP_SEARCH_CTRL.IsEnabled = true;
                 }
             }
             catch (Exception ex)
@@ -170,6 +177,41 @@ namespace EclipseScriptGenerator
             catch (Exception ex)
             {
 
+            }
+        }
+
+        /// <summary>
+        /// Filter loaded SP by name
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SP_SEARCH_CTRL_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var searchTxt = SP_SEARCH_CTRL.Text.ToLower();
+
+            if (!string.IsNullOrEmpty(searchTxt))
+            {
+                var filteredSPs = spList.Where(s => s.SPName.ToLower().Contains(searchTxt));
+                SP_LIST_CTRL.ItemsSource = filteredSPs;
+            }
+            else
+            {
+                SP_LIST_CTRL.ItemsSource = spList;
+            }
+        }
+
+        /// <summary>
+        /// Add script to export
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CHK_BX_CTRL_Checked(object sender, RoutedEventArgs e)
+        {
+            var currentSP = SP_LIST_CTRL.SelectedItem as SProc;
+
+            if (currentSP.IsSelected)
+            {
+                SLECTED_SP_LIST_CTRL.Items.Add(SP_LIST_CTRL.SelectedItem as SProc);
             }
         }
     }

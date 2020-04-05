@@ -10,7 +10,7 @@ namespace EclipseScriptGenerator
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            ThemeManagerHelper.CreateTheme("Dark", Colors.Red);
+            ThemeManagerHelper.CreateTheme("Dark", Colors.DarkViolet);
         }
     }
 }

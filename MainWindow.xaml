@@ -14,48 +14,69 @@
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="0,10,0,0">
-            <TextBlock Text="Windows Authentication Only"/>
+        <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="0,5,0,0">
+            <TextBlock Text="Connection" FontSize="16"/>
+            <Separator/>
+            <TextBlock Text="Server Name" FontSize="12" Margin="0,10,0,0"/>
             <TextBox 
                 Name="SERVER_NAME_CTRL" 
                 Controls:TextBoxHelper.Watermark="Server Name" 
                 Width="200" 
-                Margin="0,10,0,10" 
                 Text="devdrdbnode01,7947"/>
-            <Button Name="CNNECT_BTN_CTRL" Content="Connect" Click="CNNECT_BTN_CTRL_Click" Margin="0,0,0,10"></Button>
-            <ComboBox Name="DB_LIST_CTRL" DisplayMemberPath="Name" Visibility="Collapsed" SelectionChanged="DB_LIST_CTRL_SelectionChanged"/>
+            <Button Name="CNNECT_BTN_CTRL" Content="CONNECT (Win Auth Only)" Click="CNNECT_BTN_CTRL_Click" Margin="0,10,0,10"></Button>
+            <TextBlock Text="Select DataBase" FontSize="12" Margin="0,10,0,0"/>
+            <ComboBox Name="DB_LIST_CTRL" DisplayMemberPath="Name" IsEnabled="False" SelectionChanged="DB_LIST_CTRL_SelectionChanged"/>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="0,30,0,0">
+                <TextBlock Text="SPs to Export" FontSize="16"/>
+                <Separator/>
+                <DataGrid 
+                    Name="SLECTED_SP_LIST_CTRL" 
+                    EnableRowVirtualization="True" 
+                    EnableColumnVirtualization="True" 
+                    AutoGenerateColumns="False" Margin="0,10,0,0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="SP Name" Binding="{Binding SPName}" Width="*" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Content="Clear All" Margin="0,10,0,10"></Button>
+            </StackPanel>
         </StackPanel>
-
         <TabControl Grid.Column="2">
-            <TabItem Header="Script Selection" Controls:HeaderedControlHelper.HeaderFontSize="18">
+            <TabItem Header="Script Selection" Controls:HeaderedControlHelper.HeaderFontSize="16">
                 <Grid VirtualizingPanel.IsVirtualizing="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="5*" />
-                        <RowDefinition Height="*" />
+                        <RowDefinition Height="100" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Vertical">
-                        <CheckBox>Include Header In Script</CheckBox>
-                    </StackPanel>
-                    <DataGrid Grid.Row="1" Name="SP_LIST_CTRL" EnableRowVirtualization="True" EnableColumnVirtualization="True" AutoGenerateColumns="False" Margin="0,20,0,0">
+                    <TextBox Name="SP_SEARCH_CTRL" Controls:TextBoxHelper.Watermark="Search SP..." Width="300" Margin="0,10,0,10" HorizontalAlignment="Left" 
+                             VerticalAlignment="Top" TextChanged="SP_SEARCH_CTRL_TextChanged" Controls:TextBoxHelper.ClearTextButton="True"/>
+                    
+                    <DataGrid Grid.Row="0" 
+                              Name="SP_LIST_CTRL" 
+                              EnableRowVirtualization="True" 
+                              EnableColumnVirtualization="True" 
+                              AutoGenerateColumns="False" Margin="0,50,0,0" VerticalAlignment="Top">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox Name="CHK_BX_CTRL" IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                                        <CheckBox Name="CHK_BX_CTRL" Checked="CHK_BX_CTRL_Checked" IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="SP Name" Binding="{Binding SPName}" Width="*"  IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Created" Binding="{Binding CREATED}" Width="*"  IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Last Altered" Binding="{Binding LAST_ALTERED}" Width="*"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="SP Name" Binding="{Binding SPName}" Width="4*" IsReadOnly="True"/>
+                            <!--<DataGridTextColumn Header="Created" Binding="{Binding CREATED}" Width="*" IsReadOnly="True"/>-->
+                            <DataGridTextColumn Header="Last Altered" Binding="{Binding LAST_ALTERED}" Width="*" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button Grid.Row="2" Name="GEN_BTN_CTRL" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Generate" Click="GEN_BTN_CTRL_Click" Margin="0,20,0,0"></Button>
+                    <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,20,0,0">
+                        <CheckBox>Include Header In Script</CheckBox>
+                        <Button Name="GEN_BTN_CTRL" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Generate" Click="GEN_BTN_CTRL_Click" Margin="0,10,0,0" Height="27" Width="62"></Button>
+                    </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Configurations" Controls:HeaderedControlHelper.HeaderFontSize="18">
-                <TextBox  Name="HEADER_CNT_CTRL" Margin="0,10,0,0" VerticalAlignment="Stretch"/>
+            <TabItem Header="Header Text" Controls:HeaderedControlHelper.HeaderFontSize="16">
+                <TextBox  Name="HEADER_CNT_CTRL" Margin="0,10,0,0" VerticalAlignment="Stretch" AcceptsReturn="True"/>
             </TabItem>
         </TabControl>
     </Grid>
