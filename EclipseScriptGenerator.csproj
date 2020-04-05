@@ -142,6 +142,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="models\DataBase.cs" />
+    <Compile Include="models\SProc.cs" />
     <Compile Include="ThemeManagerHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
