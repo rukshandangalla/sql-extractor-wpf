@@ -49,6 +49,11 @@
                     Name="ESCRIPT_NUMBER_CTRL" 
                     Controls:TextBoxHelper.Watermark="Starting EScript Number" 
                     Width="200" Text="001"/>
+                <TextBlock Text="Shared Location (\\lbfinance\...)" FontSize="12" Margin="0,10,0,5"/>
+                <TextBox 
+                    Name="SHARED_LOCATION_CTRL" 
+                    Controls:TextBoxHelper.Watermark="Shared Location" 
+                    Width="200" Text="\\lbfinance\fileshare\Coporate_Office\IT\ECLIPSE\Eclipse Scripts\0.0.37.0\Pre\DDL\" TextWrapping="Wrap"/>
                 <TextBlock Text="Script Export Location" FontSize="12" Margin="0,10,0,5"/>
                 <TextBox 
                     Name="EXPORT_FOLDER_NAME_CTRL" 
@@ -91,15 +96,16 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,20,0,0">
-                        <CheckBox>Include Header In Script</CheckBox>
-                        <Button Name="GEN_BTN_CTRL" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Generate" Click="GEN_BTN_CTRL_Click" Margin="0,10,0,0" Height="27" Width="62"></Button>
+                        <CheckBox Name="IS_INCLUDE_HEADER_CTRL" IsChecked="True">Include Header In Script</CheckBox>
+                        <CheckBox Name="IS_CSV_GEN_CTRL" IsChecked="True" Margin="0,5,0,0">Generare CSV file</CheckBox>
+                        <Button Name="GEN_BTN_CTRL" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Generate" Click="GEN_BTN_CTRL_Click" Margin="0,5,0,0" Height="27" Width="62"></Button>
                     </StackPanel>
 
                     <DataGrid 
-                    Name="SLECTED_SP_LIST_CTRL" 
-                    EnableRowVirtualization="True" 
-                    EnableColumnVirtualization="True" 
-                    AutoGenerateColumns="False" Margin="0,50,0,0" Grid.Row="0" Grid.Column="2">
+                        Name="SLECTED_SP_LIST_CTRL" 
+                        EnableRowVirtualization="True" 
+                        EnableColumnVirtualization="True" 
+                        AutoGenerateColumns="False" Margin="0,50,0,0" Grid.Row="0" Grid.Column="2">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="SPs To Export" Binding="{Binding SPName}" Width="*" IsReadOnly="True"/>
                         </DataGrid.Columns>

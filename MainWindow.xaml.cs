@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using CsvHelper;
+using Dapper;
 using EclipseScriptGenerator.models;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
@@ -6,6 +7,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,7 @@ namespace EclipseScriptGenerator
         private List<SProc> spList;
         private List<SProc> selectedSPList;
         private int scriptCounter = 0;
+        private List<CSVEntry> csvEntries;
 
         public MainWindow()
         {
@@ -115,10 +118,20 @@ namespace EclipseScriptGenerator
         /// <param name="e"></param>
         private async void GEN_BTN_CTRL_Click(object sender, RoutedEventArgs e)
         {
+            csvEntries = new List<CSVEntry>();
             foreach (var sp in selectedSPList)
             {
                 await GetTextContent(sp);
             }
+
+            using (var writer = new StreamWriter($"{EXPORT_FOLDER_NAME_CTRL.Text}\\exported_data.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(csvEntries);
+            }
+
+            //Reset script counter
+            scriptCounter = 0;
         }
 
         /// <summary>
@@ -130,7 +143,6 @@ namespace EclipseScriptGenerator
         {
             try
             {
-                
                 var selectedDB = DB_LIST_CTRL.SelectedItem as DataBase;
                 string sqlConnectionString = $"Data Source={SERVER_NAME_CTRL.Text};Initial Catalog={selectedDB.Name};Trusted_Connection=Yes;Max Pool Size=2000;Connection Timeout=300";
 
@@ -150,16 +162,30 @@ namespace EclipseScriptGenerator
                 var fileName = $"{scriptNumber}_EScript_{sp.ROUTINE_NAME}_{UID_NAME_CTRL.Text}_{AUTHOR_NAME_CTRL.Text}.sql";
                 string path = $"{EXPORT_FOLDER_NAME_CTRL.Text}\\{fileName}";
 
-                //Replace values in content
-                var headerContent = HEADER_CNT_CTRL.Text;
-                headerContent = headerContent.Replace("##RELEASE_NUMBER##", RELEASE_NUMBER_CTRL.Text);
-                headerContent = headerContent.Replace("##SCRIPT_NUMBER##", scriptNumber);
-                headerContent = headerContent.Replace("##AUTHOR_NAME##", AUTHOR_NAME_CTRL.Text);
-                headerContent = headerContent.Replace("##STORY_NAME##", UID_NAME_CTRL.Text);
-                headerContent = headerContent.Replace("##SP_NAME##", sp.SPName);
+                if (IS_INCLUDE_HEADER_CTRL.IsChecked ?? false)
+                {
+                    //Replace values in content
+                    var headerContent = HEADER_CNT_CTRL.Text;
+                    headerContent = headerContent.Replace("##RELEASE_NUMBER##", RELEASE_NUMBER_CTRL.Text);
+                    headerContent = headerContent.Replace("##SCRIPT_NUMBER##", scriptNumber);
+                    headerContent = headerContent.Replace("##AUTHOR_NAME##", AUTHOR_NAME_CTRL.Text);
+                    headerContent = headerContent.Replace("##STORY_NAME##", UID_NAME_CTRL.Text);
+                    headerContent = headerContent.Replace("##SP_NAME##", sp.SPName);
 
-                //Append Header
-                spText += headerContent;
+                    //Append Header
+                    spText += headerContent;
+                }
+
+                //Insert CSV Entry
+                var entry = new CSVEntry
+                {
+                    StoryId = UID_NAME_CTRL.Text,
+                    ScriptName = sp.SPName,
+                    ScriptLink = $"=HYPERLINK(\"\\\\lbfinance\\fileshare\\Coporate_Office\\IT\\ECLIPSE\\Eclipse Scripts\\0.0.37.0\\Pre\\SPs\\{fileName}\")"
+                };
+
+                csvEntries.Add(entry);
+
 
                 foreach (var line in spLines)
                 {
