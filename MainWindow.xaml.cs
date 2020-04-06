@@ -114,11 +114,16 @@ namespace EclipseScriptGenerator
         {
             foreach (var sp in selectedSPList)
             {
-                await GetTextContent(sp.SPName);
+                await GetTextContent(sp);
             }
         }
 
-        private async Task GetTextContent(string spName)
+        /// <summary>
+        /// Get text for given SP
+        /// </summary>
+        /// <param name="spName"></param>
+        /// <returns></returns>
+        private async Task GetTextContent(SProc sp)
         {
             try
             {
@@ -129,33 +134,44 @@ namespace EclipseScriptGenerator
                 using (var connection = new SqlConnection(sqlConnectionString))
                 {
                     await connection.OpenAsync();
-                    var result = await connection.QueryAsync<string>($"EXEC sp_helptext '{spName}'");
+                    var result = await connection.QueryAsync<string>($"EXEC sp_helptext '{sp.SPName}'");
                     spLines = result.ToList();
                     connection.Close();
                 }
 
                 string spText = string.Empty;
 
-                // Append Header
-                spText += HEADER_CNT_CTRL.Text;
+                //Replace values in content
+                var headerContent = HEADER_CNT_CTRL.Text;
+                headerContent = headerContent.Replace("##RELEASE_NUMBER##", RELEASE_NUMBER_CTRL.Text);
+                headerContent = headerContent.Replace("##SCRIPT_NUMBER##", ESCRIPT_NUMBER_CTRL.Text);
+                headerContent = headerContent.Replace("##AUTHOR_NAME##", AUTHOR_NAME_CTRL.Text);
+                headerContent = headerContent.Replace("##STORY_NAME##", UID_NAME_CTRL.Text);
+
+                //Append Header
+                spText += headerContent;
 
                 foreach (var line in spLines)
                 {
                     spText += line;
                 }
 
-                string fileName = @"D:\Projects\RnD\SQL-Checker\sql-extractor-wpf\SPs\" + spName + ".sql";
+                //Create name of the file
+                var fileName = $"000_EScript_{sp.ROUTINE_NAME}_{UID_NAME_CTRL.Text}_{AUTHOR_NAME_CTRL.Text}.sql";
+
+
+                string path = $"D:\\Projects\\RnD\\SQL-Checker\\sql-extractor-wpf\\SPs\\{fileName}";
 
                 try
                 {
                     // Check if file already exists. If yes, delete it.     
-                    if (File.Exists(fileName))
+                    if (File.Exists(path))
                     {
-                        File.Delete(fileName);
+                        File.Delete(path);
                     }
 
                     // Create a new file     
-                    using (FileStream fs = File.Create(fileName))
+                    using (FileStream fs = File.Create(path))
                     {
                         // Add some text to file    
                         byte[] content = new UTF8Encoding(true).GetBytes(spText);
