@@ -31,29 +31,30 @@
                 <Separator/>
                 <TextBlock Text="Author Name" FontSize="12" Margin="0,10,0,5"/>
                 <TextBox 
-                Name="AUTHOR_NAME_CTRL" 
-                Controls:TextBoxHelper.Watermark="Author Name" 
-                Width="200" Text="Rukshan_Dangalla"/>
+                    Name="AUTHOR_NAME_CTRL" 
+                    Controls:TextBoxHelper.Watermark="Author Name" 
+                    Width="200" Text="Rukshan_Dangalla"/>
                 <TextBlock Text="Release Number" FontSize="12" Margin="0,10,0,5"/>
                 <TextBox 
-                Name="RELEASE_NUMBER_CTRL" 
-                Controls:TextBoxHelper.Watermark="Release Number" 
-                Width="200" Text="0.0.37.0"/>
-                <TextBlock Text="Story/Bug ID" FontSize="12" Margin="0,10,0,5"/>
+                    Name="RELEASE_NUMBER_CTRL" 
+                    Controls:TextBoxHelper.Watermark="Release Number" 
+                    Width="200" Text="0.0.37.0"/>
+                    <TextBlock Text="Story/Bug ID" FontSize="12" Margin="0,10,0,5"/>
                 <TextBox 
-                Name="UID_NAME_CTRL" 
-                Controls:TextBoxHelper.Watermark="Story/Bug ID" 
-                Width="200" Text="25576"/>
+                    Name="UID_NAME_CTRL" 
+                    Controls:TextBoxHelper.Watermark="Story/Bug ID" 
+                    Width="200" Text="25576"/>
                 <TextBlock Text="Starting EScript Number" FontSize="12" Margin="0,10,0,5"/>
                 <TextBox 
-                Name="ESCRIPT_NUMBER_CTRL" 
-                Controls:TextBoxHelper.Watermark="Starting EScript Number" 
-                Width="200" Text="001"/>
+                    Name="ESCRIPT_NUMBER_CTRL" 
+                    Controls:TextBoxHelper.Watermark="Starting EScript Number" 
+                    Width="200" Text="001"/>
                 <TextBlock Text="Script Export Location" FontSize="12" Margin="0,10,0,5"/>
                 <TextBox 
-                Name="EXPORT_FOLDER_NAME_CTRL" 
-                Controls:TextBoxHelper.Watermark="Script Export Location" 
-                Width="200"/>
+                    Name="EXPORT_FOLDER_NAME_CTRL" 
+                    Controls:TextBoxHelper.Watermark="Script Export Location" 
+                    Width="200" IsEnabled="False" TextWrapping="Wrap"/>
+                <Button Name="EX_PATH_BTN_CTRL" Content="Select Location" Margin="0,10,0,10" Click="EX_PATH_BTN_CTRL_Click"></Button>
             </StackPanel>
         </StackPanel>
         <TabControl Grid.Column="2">
@@ -103,7 +104,15 @@
                             <DataGridTextColumn Header="SPs To Export" Binding="{Binding SPName}" Width="*" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button Name="CLEAR_EXPORTS_BTN_CTRL" Click="CLEAR_EXPORTS_BTN_CTRL_Click" Grid.Row="1" Grid.Column="2" Content="Clear All" Margin="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Left"></Button>
+                    <Button 
+                        Name="CLEAR_EXPORTS_BTN_CTRL" 
+                        Click="CLEAR_EXPORTS_BTN_CTRL_Click" 
+                        Grid.Row="1" 
+                        Grid.Column="2" 
+                        Content="Clear Selection" 
+                        Margin="0,10,0,10" 
+                        VerticalAlignment="Top" 
+                        HorizontalAlignment="Left"></Button>
                 </Grid>
             </TabItem>
             <TabItem Header="Header Text" Controls:HeaderedControlHelper.HeaderFontSize="16">

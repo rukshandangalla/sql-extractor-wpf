@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using EclipseScriptGenerator.models;
 using MahApps.Metro.Controls;
+using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -146,7 +148,7 @@ namespace EclipseScriptGenerator
                 //Create name of the file
                 var scriptNumber = (Convert.ToInt32(ESCRIPT_NUMBER_CTRL.Text) + scriptCounter).ToString("000");
                 var fileName = $"{scriptNumber}_EScript_{sp.ROUTINE_NAME}_{UID_NAME_CTRL.Text}_{AUTHOR_NAME_CTRL.Text}.sql";
-                string path = $"D:\\Projects\\RnD\\SQL-Checker\\sql-extractor-wpf\\SPs\\{fileName}";
+                string path = $"{EXPORT_FOLDER_NAME_CTRL.Text}\\{fileName}";
 
                 //Replace values in content
                 var headerContent = HEADER_CNT_CTRL.Text;
@@ -245,6 +247,34 @@ namespace EclipseScriptGenerator
 
             SP_LIST_CTRL.ItemsSource = null;
             SP_LIST_CTRL.ItemsSource = spList;
+        }
+
+        /// <summary>
+        /// Set export location 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EX_PATH_BTN_CTRL_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new CommonOpenFileDialog
+            {
+                Title = "Select Export Location",
+                IsFolderPicker = true,
+
+                AddToMostRecentlyUsedList = false,
+                AllowNonFileSystemItems = false,
+                EnsureFileExists = true,
+                EnsurePathExists = true,
+                EnsureReadOnly = false,
+                EnsureValidNames = true,
+                Multiselect = false,
+                ShowPlacesList = true
+            };
+
+            if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                EXPORT_FOLDER_NAME_CTRL.Text = dlg.FileName;
+            }
         }
     }
 }
