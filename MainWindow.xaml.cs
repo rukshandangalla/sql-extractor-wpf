@@ -20,6 +20,7 @@ namespace EclipseScriptGenerator
     {
         private List<SProc> spList;
         private List<SProc> selectedSPList;
+        private int scriptCounter = 0;
 
         public MainWindow()
         {
@@ -32,7 +33,7 @@ namespace EclipseScriptGenerator
         /// </summary>
         private void LoadData()
         {
-            string headerText = File.ReadAllText(@"D:\Projects\RnD\SQL-Checker\sql-extractor-wpf\config\header.sql");
+            string headerText = File.ReadAllText(@"header.sql");
             HEADER_CNT_CTRL.Text = headerText;
 
             SP_SEARCH_CTRL.IsEnabled = false;
@@ -127,6 +128,7 @@ namespace EclipseScriptGenerator
         {
             try
             {
+                
                 var selectedDB = DB_LIST_CTRL.SelectedItem as DataBase;
                 string sqlConnectionString = $"Data Source={SERVER_NAME_CTRL.Text};Initial Catalog={selectedDB.Name};Trusted_Connection=Yes;Max Pool Size=2000;Connection Timeout=300";
 
@@ -141,12 +143,18 @@ namespace EclipseScriptGenerator
 
                 string spText = string.Empty;
 
+                //Create name of the file
+                var scriptNumber = (Convert.ToInt32(ESCRIPT_NUMBER_CTRL.Text) + scriptCounter).ToString("000");
+                var fileName = $"{scriptNumber}_EScript_{sp.ROUTINE_NAME}_{UID_NAME_CTRL.Text}_{AUTHOR_NAME_CTRL.Text}.sql";
+                string path = $"D:\\Projects\\RnD\\SQL-Checker\\sql-extractor-wpf\\SPs\\{fileName}";
+
                 //Replace values in content
                 var headerContent = HEADER_CNT_CTRL.Text;
                 headerContent = headerContent.Replace("##RELEASE_NUMBER##", RELEASE_NUMBER_CTRL.Text);
-                headerContent = headerContent.Replace("##SCRIPT_NUMBER##", ESCRIPT_NUMBER_CTRL.Text);
+                headerContent = headerContent.Replace("##SCRIPT_NUMBER##", scriptNumber);
                 headerContent = headerContent.Replace("##AUTHOR_NAME##", AUTHOR_NAME_CTRL.Text);
                 headerContent = headerContent.Replace("##STORY_NAME##", UID_NAME_CTRL.Text);
+                headerContent = headerContent.Replace("##SP_NAME##", sp.SPName);
 
                 //Append Header
                 spText += headerContent;
@@ -156,32 +164,21 @@ namespace EclipseScriptGenerator
                     spText += line;
                 }
 
-                //Create name of the file
-                var fileName = $"000_EScript_{sp.ROUTINE_NAME}_{UID_NAME_CTRL.Text}_{AUTHOR_NAME_CTRL.Text}.sql";
-
-
-                string path = $"D:\\Projects\\RnD\\SQL-Checker\\sql-extractor-wpf\\SPs\\{fileName}";
-
-                try
+                // Check if file already exists. If yes, delete it.     
+                if (File.Exists(path))
                 {
-                    // Check if file already exists. If yes, delete it.     
-                    if (File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
+                    File.Delete(path);
+                }
 
-                    // Create a new file     
-                    using (FileStream fs = File.Create(path))
-                    {
-                        // Add some text to file    
-                        byte[] content = new UTF8Encoding(true).GetBytes(spText);
-                        fs.Write(content, 0, content.Length);
-                    }
-                }
-                catch (Exception Ex)
+                // Create a new file     
+                using (FileStream fs = File.Create(path))
                 {
-                    Console.WriteLine(Ex.ToString());
+                    // Add some text to file    
+                    byte[] content = new UTF8Encoding(true).GetBytes(spText);
+                    fs.Write(content, 0, content.Length);
                 }
+
+                scriptCounter++;
             }
             catch (Exception ex)
             {

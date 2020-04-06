@@ -187,5 +187,10 @@
   <ItemGroup>
     <Folder Include="styles\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="header.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
