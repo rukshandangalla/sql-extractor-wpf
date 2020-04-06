@@ -112,16 +112,9 @@ namespace EclipseScriptGenerator
         /// <param name="e"></param>
         private async void GEN_BTN_CTRL_Click(object sender, RoutedEventArgs e)
         {
-            var spList = SP_LIST_CTRL.ItemsSource as List<SProc>;
-            var selectedList = new List<SProc>();
-
-            foreach (var sp in spList)
+            foreach (var sp in selectedSPList)
             {
-                if (sp.IsSelected)
-                {
-                    selectedList.Add(sp);
-                    await GetTextContent(sp.SPName);
-                }
+                await GetTextContent(sp.SPName);
             }
         }
 
@@ -201,7 +194,7 @@ namespace EclipseScriptGenerator
         }
 
         /// <summary>
-        /// Add script to export
+        /// Add/Remove script to export
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -211,8 +204,34 @@ namespace EclipseScriptGenerator
 
             if (currentSP.IsSelected)
             {
-                SLECTED_SP_LIST_CTRL.Items.Add(SP_LIST_CTRL.SelectedItem as SProc);
+                selectedSPList.Add(currentSP);
+                SLECTED_SP_LIST_CTRL.Items.Add(currentSP);
             }
+            else
+            {
+                selectedSPList.Remove(currentSP);
+                SLECTED_SP_LIST_CTRL.Items.Remove(currentSP);
+            }
+        }
+
+        /// <summary>
+        /// Clear all selection at once
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CLEAR_EXPORTS_BTN_CTRL_Click(object sender, RoutedEventArgs e)
+        {
+            selectedSPList.Clear();
+            SLECTED_SP_LIST_CTRL.Items.Clear();
+
+            //Uncheck from main grid
+            foreach (var sp in spList)
+            {
+                sp.IsSelected = false;
+            }
+
+            SP_LIST_CTRL.ItemsSource = null;
+            SP_LIST_CTRL.ItemsSource = spList;
         }
     }
 }

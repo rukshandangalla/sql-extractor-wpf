@@ -15,7 +15,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="0,5,0,0">
-            <TextBlock Text="Connection" FontSize="16"/>
+            <TextBlock Text="Connection" FontSize="14"/>
             <Separator/>
             <TextBlock Text="Server Name" FontSize="12" Margin="0,10,0,0"/>
             <TextBox 
@@ -27,31 +27,51 @@
             <TextBlock Text="Select DataBase" FontSize="12" Margin="0,10,0,0"/>
             <ComboBox Name="DB_LIST_CTRL" DisplayMemberPath="Name" IsEnabled="False" SelectionChanged="DB_LIST_CTRL_SelectionChanged"/>
             <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="0,30,0,0">
-                <TextBlock Text="SPs to Export" FontSize="16"/>
+                <TextBlock Text="Configurations" FontSize="14"/>
                 <Separator/>
-                <DataGrid 
-                    Name="SLECTED_SP_LIST_CTRL" 
-                    EnableRowVirtualization="True" 
-                    EnableColumnVirtualization="True" 
-                    AutoGenerateColumns="False" Margin="0,10,0,0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="SP Name" Binding="{Binding SPName}" Width="*" IsReadOnly="True"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Button Content="Clear All" Margin="0,10,0,10"></Button>
+                <TextBlock Text="Author Name" FontSize="12" Margin="0,10,0,5"/>
+                <TextBox 
+                Name="AUTHOR_NAME_CTRL" 
+                Controls:TextBoxHelper.Watermark="Author Name" 
+                Width="200"/>
+                <TextBlock Text="Release Number" FontSize="12" Margin="0,10,0,5"/>
+                <TextBox 
+                Name="RELEASE_NUMBER_CTRL" 
+                Controls:TextBoxHelper.Watermark="Release Number" 
+                Width="200"/>
+                <TextBlock Text="Story/Bug ID" FontSize="12" Margin="0,10,0,5"/>
+                <TextBox 
+                Name="UID_NAME_CTRL" 
+                Controls:TextBoxHelper.Watermark="Story/Bug ID" 
+                Width="200"/>
+                <TextBlock Text="Starting EScript Number" FontSize="12" Margin="0,10,0,5"/>
+                <TextBox 
+                Name="ESCRIPT_NUMBER_CTRL" 
+                Controls:TextBoxHelper.Watermark="Starting EScript Number" 
+                Width="200"/>
+                <TextBlock Text="Script Export Location" FontSize="12" Margin="0,10,0,5"/>
+                <TextBox 
+                Name="EXPORT_FOLDER_NAME_CTRL" 
+                Controls:TextBoxHelper.Watermark="Script Export Location" 
+                Width="200"/>
             </StackPanel>
         </StackPanel>
         <TabControl Grid.Column="2">
             <TabItem Header="Script Selection" Controls:HeaderedControlHelper.HeaderFontSize="16">
-                <Grid VirtualizingPanel.IsVirtualizing="True">
+                <Grid VirtualizingPanel.IsVirtualizing="True" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="100" />
                     </Grid.RowDefinitions>
                     <TextBox Name="SP_SEARCH_CTRL" Controls:TextBoxHelper.Watermark="Search SP..." Width="300" Margin="0,10,0,10" HorizontalAlignment="Left" 
                              VerticalAlignment="Top" TextChanged="SP_SEARCH_CTRL_TextChanged" Controls:TextBoxHelper.ClearTextButton="True"/>
-                    
-                    <DataGrid Grid.Row="0" 
+
+                    <DataGrid Grid.Row="0" Grid.Column="0"
                               Name="SP_LIST_CTRL" 
                               EnableRowVirtualization="True" 
                               EnableColumnVirtualization="True" 
@@ -60,19 +80,30 @@
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox Name="CHK_BX_CTRL" Checked="CHK_BX_CTRL_Checked" IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                                        <CheckBox Name="CHK_BX_CTRL" Click="CHK_BX_CTRL_Checked" IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="SP Name" Binding="{Binding SPName}" Width="4*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="SP Name" Binding="{Binding SPName}" Width="*" IsReadOnly="True"/>
                             <!--<DataGridTextColumn Header="Created" Binding="{Binding CREATED}" Width="*" IsReadOnly="True"/>-->
-                            <DataGridTextColumn Header="Last Altered" Binding="{Binding LAST_ALTERED}" Width="*" IsReadOnly="True"/>
+                            <!--<DataGridTextColumn Header="Last Altered" Binding="{Binding LAST_ALTERED}" Width="*" IsReadOnly="True"/>-->
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,20,0,0">
                         <CheckBox>Include Header In Script</CheckBox>
                         <Button Name="GEN_BTN_CTRL" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Generate" Click="GEN_BTN_CTRL_Click" Margin="0,10,0,0" Height="27" Width="62"></Button>
                     </StackPanel>
+
+                    <DataGrid 
+                    Name="SLECTED_SP_LIST_CTRL" 
+                    EnableRowVirtualization="True" 
+                    EnableColumnVirtualization="True" 
+                    AutoGenerateColumns="False" Margin="0,50,0,0" Grid.Row="0" Grid.Column="2">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="SPs To Export" Binding="{Binding SPName}" Width="*" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Name="CLEAR_EXPORTS_BTN_CTRL" Click="CLEAR_EXPORTS_BTN_CTRL_Click" Grid.Row="1" Grid.Column="2" Content="Clear All" Margin="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Left"></Button>
                 </Grid>
             </TabItem>
             <TabItem Header="Header Text" Controls:HeaderedControlHelper.HeaderFontSize="16">
