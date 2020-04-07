@@ -124,10 +124,13 @@ namespace EclipseScriptGenerator
                 await GetTextContent(sp);
             }
 
-            using (var writer = new StreamWriter($"{EXPORT_FOLDER_NAME_CTRL.Text}\\exported_data.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            if(IS_CSV_GEN_CTRL.IsChecked ?? false)
             {
-                csv.WriteRecords(csvEntries);
+                using (var writer = new StreamWriter($"{EXPORT_FOLDER_NAME_CTRL.Text}\\exported_data_{UID_NAME_CTRL.Text}.csv"))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteRecords(csvEntries);
+                }
             }
 
             //Reset script counter
@@ -181,7 +184,15 @@ namespace EclipseScriptGenerator
                 {
                     StoryId = UID_NAME_CTRL.Text,
                     ScriptName = sp.SPName,
-                    ScriptLink = $"=HYPERLINK(\"\\\\lbfinance\\fileshare\\Coporate_Office\\IT\\ECLIPSE\\Eclipse Scripts\\0.0.37.0\\Pre\\SPs\\{fileName}\")"
+                    ScriptType = "SP",
+                    ScriptRisk = "",
+                    DB = selectedDB.Name,
+                    CreatedBy = AUTHOR_NAME_CTRL.Text,
+                    QAReleaseDate = DateTime.Now.ToString("dd/MM/yyyy"),
+                    ReleaseNumber = RELEASE_NUMBER_CTRL.Text,
+                    ScriptLink = $"=HYPERLINK(\"{SHARED_LOCATION_CTRL.Text}{fileName}\")",
+                    Tag = "",
+                    Status = ""
                 };
 
                 csvEntries.Add(entry);

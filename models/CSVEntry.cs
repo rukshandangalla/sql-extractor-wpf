@@ -16,7 +16,7 @@ namespace EclipseScriptGenerator.models
 
         public string CreatedBy { get; set; }
 
-        public DateTime QAReleaseDate { get; set; }
+        public string QAReleaseDate { get; set; }
 
         public string ReleaseNumber { get; set; }
 
